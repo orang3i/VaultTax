@@ -1,0 +1,8 @@
+name: VaultTax
+version: '1.0-SNAPSHOT'
+main: VaultTax.VaultTaxMain
+api-version: 1.18
+commands:
+  debug:
+    description: Your description
+    usage: /<command>

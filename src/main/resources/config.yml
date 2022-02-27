@@ -1,0 +1,5 @@
+
+settings:
+  world : "world"
+  taxPercentage : 10
+  interval : 20 #in ticks (20 ticks = 1 second) #orange change this to 24000 later
