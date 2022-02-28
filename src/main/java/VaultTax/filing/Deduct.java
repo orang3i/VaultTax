@@ -28,7 +28,10 @@ public class Deduct implements Listener {
         plugin = pl;
     }
 
-    public static HashMap<UUID, PermissionAttachment> permissions = new HashMap<UUID, PermissionAttachment>();
+  public static   FileConfiguration ple;
+  public static   File file = new File("plugins/VaultTax/PlayerData", "balance.yml"); // lifeonblack uuid.
+public static  HashMap <UUID ,PermissionAttachment> map = new HashMap<>();
+    public static  PermissionAttachment attachment;
 
 
     @EventHandler
@@ -40,49 +43,50 @@ public class Deduct implements Listener {
                 Player player = event.getPlayer();
                 UUID puuid = player.getUniqueId();
 
-                FileConfiguration qui;
-                File fileq = new File("plugins/VaultTax/PlayerData", "playerQuits.yml");
-                qui = YamlConfiguration.loadConfiguration(fileq);
-
-                qui.set(puuid.toString(), null);
-                try {
-                    qui.save(fileq);
-                } catch (Exception e) {
-                }
-                qui = YamlConfiguration.loadConfiguration(fileq);
-
-                FileConfiguration ple;
-                File file = new File("plugins/VaultTax/PlayerData", "balance.yml"); // lifeonblack uuid.
-                if (!file.exists()) { // if lifeonblack uuid is not on plugins/YourPlugin directory
-                    try {
-                        file.createNewFile(); // create the file lifeonblack uuid .yml
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                ple = YamlConfiguration.loadConfiguration(file);
 
 
-                double tax = ple.getDouble("TBW_"+puuid.toString());
-                Bukkit.broadcastMessage(String.valueOf(tax));
-                VaultTaxMain.getEconomy().withdrawPlayer(player, tax);
-
-                ple = YamlConfiguration.loadConfiguration(file);
-                ple.set("Balance_"+player.getUniqueId(), VaultTaxMain.getEconomy().getBalance(player));
-                ple.set("TBW_"+puuid.toString(), null);
-
-                try {
-                    ple.save(file);
-                } catch (Exception e) {
-                }
-
-                ple = YamlConfiguration.loadConfiguration(file);
 
                 if (player.hasPermission("VaultTax.BalReg")) {
-Bukkit.broadcastMessage("has permission");
+                  Bukkit.broadcastMessage("has permission");
                 } else {
 
 
+                    FileConfiguration qui;
+                    File fileq = new File("plugins/VaultTax/PlayerData", "playerQuits.yml");
+                    qui = YamlConfiguration.loadConfiguration(fileq);
+
+                    qui.set(puuid.toString(), null);
+                    try {
+                        qui.save(fileq);
+                    } catch (Exception e) {
+                    }
+                    qui = YamlConfiguration.loadConfiguration(fileq);
+
+
+                    if (!file.exists()) { // if lifeonblack uuid is not on plugins/YourPlugin directory
+                        try {
+                            file.createNewFile(); // create the file lifeonblack uuid .yml
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    ple = YamlConfiguration.loadConfiguration(file);
+
+
+                    double tax = ple.getDouble("TBW_"+puuid.toString());
+                    Bukkit.broadcastMessage(String.valueOf(tax));
+                    VaultTaxMain.getEconomy().withdrawPlayer(player, tax);
+
+                    ple = YamlConfiguration.loadConfiguration(file);
+                    ple.set("Balance_"+player.getUniqueId(), VaultTaxMain.getEconomy().getBalance(player));
+                    ple.set("TBW_"+puuid.toString(), null);
+
+                    try {
+                        ple.save(file);
+                    } catch (Exception e) {
+                    }
+
+                    ple = YamlConfiguration.loadConfiguration(file);
                     ple = YamlConfiguration.loadConfiguration(file);
 
 
@@ -94,13 +98,41 @@ Bukkit.broadcastMessage("has permission");
 
                     ple = YamlConfiguration.loadConfiguration(file);
 
-                    PermissionAttachment attachment = player.addAttachment(plugin);
-                    permissions.put(player.getUniqueId(), attachment);
+                     attachment = player.addAttachment(plugin );
+                    map.put(player.getUniqueId(), attachment);
+                    ple.set(puuid + "VaultTax.BalReg", true);
+                    try {
+                        ple.save(file);
+                    } catch (Exception e) {
+                    }
+                    ple = YamlConfiguration.loadConfiguration(file);
+                    Boolean ba =  ple.getBoolean(puuid + "VaultTax.BalReg");
 
-                    PermissionAttachment pperms = permissions.get(player.getUniqueId());
-                    pperms.setPermission("VaultTax.BalReg", true);
+
+                        attachment.setPermission("VaultTax.BalReg", ba);
 
 
+
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+                        @Override
+                        public void run() {
+                            attachment.unsetPermission("VaultTax.BalReg");
+                            ple.set(puuid + "VaultTax.BalReg", true);
+                            try {
+                                ple.save(file);
+                            } catch (Exception e) {
+                            }
+                            ple = YamlConfiguration.loadConfiguration(file);
+                            Bukkit.broadcastMessage("removed");
+                            }
+                        }, VaultTaxMain.fordeduct);
+
+                    Bukkit.broadcastMessage(attachment.getPermissions().toString());
+
+                }
+                if (player.hasPermission("VaultTax.BalReg")) {
+                    Bukkit.broadcastMessage("has permission");
                 }
 
 

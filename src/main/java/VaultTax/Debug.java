@@ -24,20 +24,12 @@ public class Debug implements CommandExecutor {
 
         plugin = pl;
     }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        Long time = Bukkit.getServer().getWorld("world").getTime(); // remove this later
-
-        // remove this later
-
         double taxpec = plugin.getConfig().getDouble("settings.taxPercentage");
-        for(Player player : Bukkit.getOnlinePlayers()) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
 
-            PermissionAttachment attachment = player.addAttachment(plugin);
-            Deduct.permissions.put(player.getUniqueId(), attachment);
-
-            PermissionAttachment pperms = Deduct.permissions.get(player.getUniqueId());
-            pperms.unsetPermission("VaultTax.BalReg");
 
             UUID puuid = player.getUniqueId();
             FileConfiguration ple;
@@ -53,7 +45,7 @@ public class Debug implements CommandExecutor {
                 String name = Bukkit.getServer().getOfflinePlayer(uuidd).getName();
                 double baleo = ple.getDouble("Balance_" + uuidd);
                 Bukkit.broadcastMessage(String.valueOf(baleo));
-                double amtearnedo = 30000 - baleo;
+                double amtearnedo = VaultTaxMain.getEconomy().getBalance(name) - baleo;
 
                 double taxo = amtearnedo * taxpec / 100;
                 Bukkit.broadcastMessage(String.valueOf(amtearnedo));
@@ -96,15 +88,11 @@ public class Debug implements CommandExecutor {
             //if here {
 
 
-
-
-
             //if ends here}
         }
+
 
         // If the player (or console) uses our command correct, we can return true
         return true;
     }
-
-
 }

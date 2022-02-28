@@ -7,8 +7,10 @@ VaultTax\filing\Deduct.class
 VaultTax\iridium\SolidPattern.class
 VaultTax\Logger$LogLevel.class
 VaultTax\iridium\RainbowPattern.class
+VaultTax\filing\Deduct$1$1.class
 VaultTax\iridium\Pattern.class
 VaultTax\iridium\IridiumColorAPI.class
 VaultTax\Debug.class
 VaultTax\VaultTaxMain.class
 VaultTax\Logger.class
+VaultTax\VaultTaxMain$2.class

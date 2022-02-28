@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static VaultTax.filing.Deduct.attachment;
+
 public class PlayerQuit implements Listener {
 
     private VaultTaxMain plugin;
@@ -54,6 +56,9 @@ public class PlayerQuit implements Listener {
 
             Bukkit.broadcastMessage(uuidd);
         }
+
+        player.removeAttachment(attachment);
+        Deduct.map.remove(player.getUniqueId());
 
     }
 

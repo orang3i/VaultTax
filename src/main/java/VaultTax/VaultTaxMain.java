@@ -21,7 +21,8 @@ import java.util.UUID;
 
 public final class VaultTaxMain extends JavaPlugin {
 
-    public Long interval = getConfig().getLong("settings.interval");
+    public static Long interval ;
+    public static int intervali;
     private static VaultTaxMain instance;
 
     public static int MAXR;
@@ -30,6 +31,7 @@ public final class VaultTaxMain extends JavaPlugin {
     private static Economy econ = null;
     private static Permission perms = null;
     private static Chat chat = null;
+    public static long fordeduct;
 
 
 
@@ -41,7 +43,8 @@ public final class VaultTaxMain extends JavaPlugin {
     public void onDisable() {
 
 
-        Deduct.permissions.clear();
+
+
         FileConfiguration qui;
         File fileq = new File("plugins/VaultTax/PlayerData", "playerQuits.yml");
         qui = YamlConfiguration.loadConfiguration(fileq);
@@ -52,8 +55,8 @@ public final class VaultTaxMain extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Deduct.permissions.clear();
-
+       interval = getConfig().getLong("settings.interval");
+     intervali = getConfig().getInt("settings.interval");
         saveDefaultConfig();
         Logger.log(Logger.LogLevel.OUTLINE, "********************************************************************************");
         Logger.log(Logger.LogLevel.SUCCESS, IridiumColorAPI.process("<GRADIENT:9281fb>Thank you for using VaultTax!</GRADIENT:eb93fc>"));
@@ -93,7 +96,17 @@ public final class VaultTaxMain extends JavaPlugin {
             }
         }
         ple = YamlConfiguration.loadConfiguration(file);
+        FileConfiguration prm;
+        File filep = new File("plugins/VaultTax/PlayerData", "perms.yml");
 
+        if (!filep.exists()) { // if lifeonblack uuid is not on plugins/YourPlugin directory
+            try {
+                filep.createNewFile(); // create the file lifeonblack uuid .yml
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        prm = YamlConfiguration.loadConfiguration(filep);
         if (!setupEconomy() ) {
 
             getServer().getPluginManager().disablePlugin(this);
@@ -110,11 +123,8 @@ public final class VaultTaxMain extends JavaPlugin {
                 double taxpec = getConfig().getDouble("settings.taxPercentage");
                 for(Player player : Bukkit.getOnlinePlayers()) {
 
-                    PermissionAttachment attachment = player.addAttachment(getInstance());
-                    Deduct.permissions.put(player.getUniqueId(), attachment);
 
-                    PermissionAttachment pperms = Deduct.permissions.get(player.getUniqueId());
-                    pperms.unsetPermission("VaultTax.BalReg");
+
 
                     UUID puuid = player.getUniqueId();
                     FileConfiguration ple;
@@ -221,6 +231,19 @@ public final class VaultTaxMain extends JavaPlugin {
     public static Chat getChat() {
         return chat;
     }
+public  void timer(){
 
+    Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+        @Override
+        public void run() {
+
+           Long countdown = interval;
+           fordeduct = countdown--;
+
+
+
+        }
+        }, 0L, 0L);
+}
 }
 
