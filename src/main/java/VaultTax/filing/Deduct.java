@@ -28,10 +28,8 @@ public class Deduct implements Listener {
         plugin = pl;
     }
 
-  public static   FileConfiguration ple;
-  public static   File file = new File("plugins/VaultTax/PlayerData", "balance.yml"); // lifeonblack uuid.
-public static  HashMap <UUID ,PermissionAttachment> map = new HashMap<>();
-    public static  PermissionAttachment attachment;
+ // lifeonblack uuid.
+
 
 
     @EventHandler
@@ -42,12 +40,18 @@ public static  HashMap <UUID ,PermissionAttachment> map = new HashMap<>();
             public void run() {
                 Player player = event.getPlayer();
                 UUID puuid = player.getUniqueId();
+                Bukkit.broadcastMessage(String.valueOf(VaultTaxMain.fordeduct + "fore"));
+                FileConfiguration ple ;
+               File file = new File("plugins/VaultTax/PlayerData", "balance.yml");
+                 ple = YamlConfiguration.loadConfiguration(file)  ;
 
+                FileConfiguration perms ;
+                File prm = new File("plugins/VaultTax/PlayerData", "perms.yml");
+                perms = YamlConfiguration.loadConfiguration(prm)  ;
+                Boolean ba =  perms.getBoolean(puuid + "BalReg");
 
+                if (ba == true) {
 
-
-                if (player.hasPermission("VaultTax.BalReg")) {
-                  Bukkit.broadcastMessage("has permission");
                 } else {
 
 
@@ -98,43 +102,67 @@ public static  HashMap <UUID ,PermissionAttachment> map = new HashMap<>();
 
                     ple = YamlConfiguration.loadConfiguration(file);
 
-                     attachment = player.addAttachment(plugin );
-                    map.put(player.getUniqueId(), attachment);
-                    ple.set(puuid + "VaultTax.BalReg", true);
-                    try {
-                        ple.save(file);
-                    } catch (Exception e) {
-                    }
-                    ple = YamlConfiguration.loadConfiguration(file);
-                    Boolean ba =  ple.getBoolean(puuid + "VaultTax.BalReg");
 
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 
-                        attachment.setPermission("VaultTax.BalReg", ba);
+                        @Override
+                        public void run() {
 
+                            FileConfiguration ple ;
+                            File file = new File("plugins/VaultTax/PlayerData", "perms.yml");
+                            ple = YamlConfiguration.loadConfiguration(file)  ;
+                            ple.set(puuid.toString() + "BalReg", true);
+                            try {
+                                ple.save(file);
+                            } catch (Exception e) {
+                            }
+                            ple = YamlConfiguration.loadConfiguration(file);
+
+                        }
+                    },0L );
 
 
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 
                         @Override
                         public void run() {
-                            attachment.unsetPermission("VaultTax.BalReg");
-                            ple.set(puuid + "VaultTax.BalReg", true);
+
+                            FileConfiguration ple ;
+                            File file = new File("plugins/VaultTax/PlayerData", "perms.yml");
+                            ple = YamlConfiguration.loadConfiguration(file)  ;
+                            ple.set(puuid.toString() + "BalReg", false);
                             try {
                                 ple.save(file);
                             } catch (Exception e) {
                             }
                             ple = YamlConfiguration.loadConfiguration(file);
-                            Bukkit.broadcastMessage("removed");
+Bukkit.broadcastMessage("proceed");
                             }
                         }, VaultTaxMain.fordeduct);
 
-                    Bukkit.broadcastMessage(attachment.getPermissions().toString());
-
-                }
-                if (player.hasPermission("VaultTax.BalReg")) {
-                    Bukkit.broadcastMessage("has permission");
+Bukkit.broadcastMessage(String.valueOf(VaultTaxMain.fordeduct));
                 }
 
+                if (ba == false) {
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            FileConfiguration ple ;
+                            File file = new File("plugins/VaultTax/PlayerData", "perms.yml");
+                            ple = YamlConfiguration.loadConfiguration(file)  ;
+                            ple.set(puuid.toString() + "BalReg", true);
+                            try {
+                                ple.save(file);
+                            } catch (Exception e) {
+                            }
+                            ple = YamlConfiguration.loadConfiguration(file);
+
+                        }
+                    },0L );
+
+                }
 
             }
         }, 40L);
