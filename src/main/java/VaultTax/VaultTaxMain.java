@@ -15,7 +15,9 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.UUID;
 
@@ -125,6 +127,29 @@ public  static  Player pe ;
             @Override
             public void run() {
 
+                FileConfiguration plc ;
+                try {
+
+
+                    FileWriter fw = new FileWriter(new File("plugins/VaultTax/PlayerData", "perms.yml"));
+                    PrintWriter pw = new PrintWriter(fw);
+                    pw.write("");
+                    pw.flush();
+                    pw.close();
+                    Bukkit.broadcastMessage("that worked");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                File filc = new File("plugins/VaultTax/PlayerData", "perms.yml");
+                if (!filc.exists()) { // if lifeonblack uuid is not on plugins/YourPlugin directory
+                    try {
+                        filc.createNewFile(); // create the file lifeonblack uuid .yml
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                plc = YamlConfiguration.loadConfiguration(filc)  ;
+
 
 
                 double taxpec = getConfig().getDouble("settings.taxPercentage");
@@ -194,7 +219,12 @@ public  static  Player pe ;
 
 
 
-
+                    plc.set(puuid.toString() + "BalReg", true);
+                    try {
+                        plc.save(filc);
+                    } catch (Exception e) {
+                    }
+                    plc = YamlConfiguration.loadConfiguration(filc);
 
                     //if ends here}
                     timer();
