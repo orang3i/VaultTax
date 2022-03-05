@@ -3,6 +3,10 @@ version: '1.0-SNAPSHOT'
 main: VaultTax.VaultTaxMain
 api-version: 1.18
 commands:
-  debug:
+  spigui:
     description: Your description
     usage: /<command>
+
+  paytaxes:
+      description: Your description
+      usage: /<command>
