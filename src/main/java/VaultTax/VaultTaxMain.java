@@ -445,7 +445,7 @@ public  void timer(){
        ple = YamlConfiguration.loadConfiguration(file);
 
 
-                boolean clicked = plce.getBoolean("Clicked_" + player.getUniqueId().toString());
+                boolean clicked = ple.getBoolean("Clicked_" + player.getUniqueId().toString());
                 if(clicked != true ) {
                     for (String uuidd : qui.getKeys(false)) {
 
