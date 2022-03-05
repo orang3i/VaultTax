@@ -1,5 +1,9 @@
 
 settings:
-  world : "world"
+  #mode 1 is automated filing , mode 2 is manual filing ie it will promt the user to file their taxes and if they fail to file their taxes
+  #will be deducted automatically with a penalty
+  mode: 1
+  timeleftToFile : 100
   taxPercentage : 10
+  finePercentage : 20
   interval : 20 #in ticks (20 ticks = 1 second) #orange change this to 24000 later
