@@ -50,7 +50,7 @@ public final class VaultTaxMain extends JavaPlugin {
     public static Player pe;
     public static double taxpec;
     public static int mode;
-
+public  static double taxe;
     public static VaultTaxMain getInstance() {
 
         return instance;
@@ -370,10 +370,17 @@ public final class VaultTaxMain extends JavaPlugin {
             File filer = new File("plugins/VaultTax/PlayerData", "balance.yml");
             plr = YamlConfiguration.loadConfiguration(filer);
 
+
             double baler = plr.getDouble("Balance_" + player1.getUniqueId().toString());
             double amtearnedca = VaultTaxMain.getEconomy().getBalance(player1) - baler;
 
-            double taxe = amtearnedca * taxpec / 100;
+            if(amtearnedca > 0) {
+                 taxe = amtearnedca * taxpec / 100;
+            }
+            if(amtearnedca <= 0) {
+                 taxe = 0;
+            }
+
             ItemStack item = new ItemStack(Material.CHEST);
             ItemMeta itemMeta = item.getItemMeta();
             itemMeta.setDisplayName("tax: " + taxe);
@@ -391,8 +398,8 @@ public final class VaultTaxMain extends JavaPlugin {
 
 
                     UUID puuid = player.getUniqueId();
-                    FileConfiguration ple;
-                    File file = new File("plugins/VaultTax/PlayerData", "balance.yml"); // lifeonblack uuid.
+                        FileConfiguration ple;
+                        File file = new File("plugins/VaultTax/PlayerData", "balance.yml"); // lifeonblack uuid.
                     FileConfiguration qui;
                     File fileq = new File("plugins/VaultTax/PlayerData", "playerQuits.yml");
                     qui = YamlConfiguration.loadConfiguration(fileq);
@@ -413,12 +420,14 @@ public final class VaultTaxMain extends JavaPlugin {
 
                             double amtearnedo = VaultTaxMain.getEconomy().getBalance(name) - baleo;
 
+
                             double taxo = amtearnedo * taxpec / 100;
 
-                            double taxoo = Math.abs(taxo);
 
 
-                            ple.set("TBW_" + uuidd, taxoo);
+
+
+                            ple.set("TBW_" + uuidd, taxo);
 
 
                             try {
@@ -443,7 +452,7 @@ public final class VaultTaxMain extends JavaPlugin {
 
                         double tax = amtearned * taxpec / 100;
 
-                        if (amtearned > 0) {
+                        if (tax > 0) {
                             player.sendMessage(IridiumColorAPI.process("<GRADIENT:9281fb>You have earned $" + amtearned + " " + " and have been taxed $" + " " + tax + "</GRADIENT:eb93fc>"));
                         } else {
                             player.sendMessage(IridiumColorAPI.process("<GRADIENT:9281fb>well... you didn't earn any money so you don't have to pay taxes!</GRADIENT:eb93fc>"));
@@ -451,17 +460,15 @@ public final class VaultTaxMain extends JavaPlugin {
 
                         if(tax > 0) {
                             VaultTaxMain.getEconomy().withdrawPlayer(player, tax);
+
+
                         }
                         //eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+                        saveBal(player);
 
-                        plee.set("Balance_" + player.getUniqueId().toString(), VaultTaxMain.getEconomy().getBalance(player));
-                        try {
-                            plee.save(filee);
-                        } catch (Exception e) {
-                        }
 
-                        plee = YamlConfiguration.loadConfiguration(filee);
 
+                        ple = YamlConfiguration.loadConfiguration(file);
 
                         //if here {
 
@@ -471,7 +478,7 @@ public final class VaultTaxMain extends JavaPlugin {
                         } catch (Exception e) {
                         }
                         plce = YamlConfiguration.loadConfiguration(filce);
-
+                        ple.set("Balance_" + player.getUniqueId(), VaultTaxMain.getEconomy().getBalance(player));
                         ple.set("Clicked_" + player.getUniqueId().toString(), true);
                         try {
                             ple.save(file);
@@ -479,6 +486,8 @@ public final class VaultTaxMain extends JavaPlugin {
                         }
                         ple = YamlConfiguration.loadConfiguration(file);
                         plce = YamlConfiguration.loadConfiguration(filce);
+
+
                     }
                     if (clicked == true) {
 
@@ -490,5 +499,31 @@ public final class VaultTaxMain extends JavaPlugin {
             });
         }
 
+
+        public static void saveBal(Player player) {
+
+            FileConfiguration ple;
+            File file = new File(getInstance().getDataFolder() + File.separator + "PlayerData", "balance.yml");
+            ple = YamlConfiguration.loadConfiguration(file);
+            ple.set("Balance_" + player.getUniqueId().toString(), VaultTaxMain.getEconomy().getBalance(player));
+            try {
+                ple.save(file);
+            } catch (Exception e) {
+            }
+            if(file.exists()) {
+
+            }
+            else{
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            ple = YamlConfiguration.loadConfiguration(file);
+
+        }
     }
 
