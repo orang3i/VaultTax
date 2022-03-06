@@ -3,10 +3,6 @@ package VaultTax;
 import VaultTax.filing.Deduct;
 import VaultTax.filing.PlayerQuit;
 import VaultTax.iridium.IridiumColorAPI;
-import com.samjakob.spigui.SGMenu;
-import com.samjakob.spigui.SpiGUI;
-import com.samjakob.spigui.buttons.SGButton;
-import com.samjakob.spigui.item.ItemBuilder;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -15,26 +11,15 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.ipvp.canvas.Menu;
 import org.ipvp.canvas.MenuFunctionListener;
 import org.ipvp.canvas.slot.ClickOptions;
@@ -45,10 +30,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.IntStream;
+
+import static VaultTax.VaultTaxMain.taxpec;
 
 public final class VaultTaxMain extends JavaPlugin {
 
@@ -65,6 +49,7 @@ public final class VaultTaxMain extends JavaPlugin {
     public static long fordeduct ;
 public  static  Player pe ;
 public static  double taxpec;
+
 
     public static VaultTaxMain getInstance() {
 
@@ -92,8 +77,8 @@ public static  double taxpec;
     @Override
     public void onEnable() {
       taxpec =  getConfig().getDouble("settings.taxPercentage");
-       interval = getConfig().getLong("settings.interval");
-     intervali = getConfig().getInt("settings.interval");
+       interval = getConfig().getLong("settings.interval") * 20;
+     intervali = getConfig().getInt("settings.interval") * 20;
         saveDefaultConfig();
         Logger.log(Logger.LogLevel.OUTLINE, "********************************************************************************");
         Logger.log(Logger.LogLevel.SUCCESS, IridiumColorAPI.process("<GRADIENT:9281fb>Thank you for using VaultTax!</GRADIENT:eb93fc>"));
@@ -106,7 +91,7 @@ public static  double taxpec;
         saveDefaultConfig();
         getServer().getPluginManager().registerEvents(new Deduct(this), this);
         getServer().getPluginManager().registerEvents(new PlayerQuit(this), this);
-        this.getCommand("paytaxes").setExecutor(new paytaxes());
+        this.getCommand("paytaxes").setExecutor(new PayTaxes());
         Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), this);
 
 
@@ -163,8 +148,8 @@ public static  double taxpec;
 
                         double taxpec = getConfig().getDouble("settings.taxPercentage");
                         int mode = getConfig().getInt("settings.mode");
-                        Long timeleft = getConfig().getLong("settings.timeleftToFile");
-                          Bukkit.broadcastMessage(mode+"");
+                        Long timeleft = getConfig().getLong("settings.timeleftToFile") * 20;
+
                             FileConfiguration plc;
                             try {
 
@@ -174,7 +159,7 @@ public static  double taxpec;
                                 pw.write("");
                                 pw.flush();
                                 pw.close();
-                                Bukkit.broadcastMessage("that worked");
+
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -206,23 +191,25 @@ public static  double taxpec;
 
                                     String name = Bukkit.getServer().getOfflinePlayer(uuidd).getName();
                                     double baleo = ple.getDouble("Balance_" + uuidd);
-                                    Bukkit.broadcastMessage(String.valueOf(baleo));
+
                                     double amtearnedo = VaultTaxMain.getEconomy().getBalance(name) - baleo;
 
                                     double taxo = amtearnedo * taxpec / 100;
-                                    Bukkit.broadcastMessage(String.valueOf(amtearnedo));
+
                                     double taxoo = Math.abs(taxo);
 
-                                    Bukkit.broadcastMessage(String.valueOf(taxoo));
+
                                     ple.set("TBW_" + uuidd, taxoo);
 
-                                    Bukkit.broadcastMessage(String.valueOf(taxoo));
+
                                     try {
                                         ple.save(file);
                                     } catch (Exception e) {
                                     }
 
                                     ple = YamlConfiguration.loadConfiguration(file);
+
+
                                 }
                                 //eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
                                 double bale = ple.getDouble("Balance_" + player.getUniqueId().toString());
@@ -260,8 +247,45 @@ public static  double taxpec;
                             }
                         }
                         if (mode == 2) {
+                            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(getInstance(), new Runnable() {
 
-                            Bukkit.broadcastMessage("mode 2");
+                                @Override
+                                        public void  run() {
+                                FileConfiguration qui;
+                                File fileq = new File("plugins/VaultTax/PlayerData", "playerQuits.yml");
+                                qui =YamlConfiguration.loadConfiguration(fileq);
+
+                            for(String uuidd :qui.getKeys(false)) {
+
+
+                                double finepercu = getConfig().getDouble("settings.finePercentage");
+                                FileConfiguration peeu;
+                                File filepeu = new File("plugins/VaultTax/PlayerData", "balance.yml");
+                                peeu = YamlConfiguration.loadConfiguration(filepeu);
+                                double baleou = peeu.getDouble("Balance_" + uuidd);
+
+                                double amtearnedou = VaultTaxMain.getEconomy().getBalance(qui.getString(uuidd)) - baleou;
+
+                                double taxou = amtearnedou * taxpec / 100;
+
+                                double taxoou = Math.abs(taxou);
+
+                                double fineu = (taxoou * finepercu / 100) + taxoou;
+
+                                econ.withdrawPlayer(qui.getString(uuidd), fineu);
+
+
+                                peeu.set("Balance_" + uuidd, VaultTaxMain.getEconomy().getBalance(qui.getString(uuidd)));
+                                try {
+                                    peeu.save(filepeu);
+                                } catch (Exception e) {
+                                }
+
+                                peeu = YamlConfiguration.loadConfiguration(filepeu);
+                            }
+                                }
+                            }, timeleft);
+
                        for(Player p : Bukkit.getOnlinePlayers()){
                            FileConfiguration quide;
                            File fileqde = new File("plugins/VaultTax/PlayerData", "balance.yml");
@@ -274,7 +298,7 @@ public static  double taxpec;
                            quide = YamlConfiguration.loadConfiguration(fileqde);
 
 
-                           Bukkit.broadcastMessage(IridiumColorAPI.process("<GRADIENT:9281fb>please file your taxes within " +timeleft +"</GRADIENT:eb93fc>"));
+                           Bukkit.broadcastMessage(IridiumColorAPI.process("<GRADIENT:9281fb>please file your taxes within " +timeleft/20 +" seconds</GRADIENT:eb93fc>"));
                            TextComponent text = new TextComponent(IridiumColorAPI.process("<GRADIENT:9281fb>click this to open the tax menu </GRADIENT:eb93fc>"));
                            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("yes! this message").create()));
                            text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/paytaxes"));
@@ -294,7 +318,7 @@ public static  double taxpec;
 
                                  boolean  clicked = quid.getBoolean("Clicked_" + p.getUniqueId().toString());
                                  if(clicked == true){
-                                     Bukkit.broadcastMessage("proecess");
+
                                  }
                                    if(!clicked){
 
@@ -303,19 +327,19 @@ public static  double taxpec;
                                        File filepe = new File("plugins/VaultTax/PlayerData", "balance.yml");
                                        pee = YamlConfiguration.loadConfiguration(filepe);
                                        double baleo = pee.getDouble("Balance_" + p.getUniqueId());
-                                       Bukkit.broadcastMessage(String.valueOf(baleo));
+
                                        double amtearnedo = VaultTaxMain.getEconomy().getBalance(p.getName()) - baleo;
 
                                        double taxo = amtearnedo * taxpec / 100;
-                                       Bukkit.broadcastMessage(String.valueOf(amtearnedo));
+
                                        double taxoo = Math.abs(taxo);
 
                                        double fine  = (taxoo * fineperc / 100) + taxoo;
 
                                        econ.withdrawPlayer(p, fine);
-
-                                       Bukkit.broadcastMessage(String.valueOf(Bukkit.broadcastMessage("you have been fined " + fine + " for not paying your taxes")));
-
+                                       if(fine > 0) {
+                                           p.sendMessage(IridiumColorAPI.process("<GRADIENT:9281fb>you have been fined " + fine + "</GRADIENT:eb93fc>"));
+                                       }
                                        pee.set("Balance_" +  p.getUniqueId().toString(), VaultTaxMain.getEconomy().getBalance(p));
                                        try {
                                            pee.save(filepe);
@@ -323,6 +347,8 @@ public static  double taxpec;
                                        }
 
                                        pee = YamlConfiguration.loadConfiguration(filepe);
+
+
                                    }
                                }
                            }, timeleft);
@@ -333,7 +359,7 @@ public static  double taxpec;
                     //if ends here}
 
                     timer();
-                        Bukkit.broadcastMessage("that happend");
+
                 }
 
 
@@ -427,7 +453,7 @@ public  void timer(){
                 .build();
        menu.getSlot(4).setClickOptions(options);
         menu.getSlot(4).setClickHandler(( player2 , information) -> {
-            player2.sendMessage("You clicked the slot at index ");
+
             for (Player player : Bukkit.getOnlinePlayers()) {
 
 
@@ -451,17 +477,17 @@ public  void timer(){
 
                         String name = Bukkit.getServer().getOfflinePlayer(uuidd).getName();
                         double baleo = ple.getDouble("Balance_" + uuidd);
-                        Bukkit.broadcastMessage(String.valueOf(baleo));
+
                         double amtearnedo = VaultTaxMain.getEconomy().getBalance(name) - baleo;
 
                         double taxo = amtearnedo * taxpec / 100;
-                        Bukkit.broadcastMessage(String.valueOf(amtearnedo));
+
                         double taxoo = Math.abs(taxo);
 
-                        Bukkit.broadcastMessage(String.valueOf(taxoo));
+
                         ple.set("TBW_" + uuidd, taxoo);
 
-                        Bukkit.broadcastMessage(String.valueOf(taxoo));
+
                         try {
                             ple.save(file);
                         } catch (Exception e) {
@@ -519,7 +545,7 @@ public  void timer(){
                     plce = YamlConfiguration.loadConfiguration(filce);
                 }if(clicked == true) {
 
-                    player.sendMessage(IridiumColorAPI.process("<GRADIENT:9281fb>You have already payed your taxes</GRADIENT:eb93fc>"));
+                    player.sendMessage(IridiumColorAPI.process("<GRADIENT:9281fb>You have already filed your taxes</GRADIENT:eb93fc>"));
                 }
 
             }

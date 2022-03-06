@@ -7,6 +7,7 @@ VaultTax\VaultTaxMain$1.class
 VaultTax\filing\Deduct$1$3.class
 VaultTax\VaultTaxMain$1$1.class
 VaultTax\Metrics$CustomChart.class
+VaultTax\PayTaxes.class
 VaultTax\iridium\SolidPattern.class
 VaultTax\Logger$LogLevel.class
 VaultTax\filing\Deduct$1$2.class
@@ -16,6 +17,7 @@ VaultTax\VaultTaxMain.class
 VaultTax\Logger.class
 VaultTax\Metrics$SimplePie.class
 VaultTax\iridium\GradientPattern.class
+VaultTax\VaultTaxMain$1$2.class
 VaultTax\filing\PlayerQuit.class
 VaultTax\Metrics$JsonObjectBuilder$JsonObject.class
 VaultTax\Metrics$MultiLineChart.class
@@ -29,4 +31,3 @@ VaultTax\Metrics$AdvancedPie.class
 VaultTax\iridium\IridiumColorAPI.class
 VaultTax\Metrics.class
 VaultTax\VaultTaxMain$2.class
-VaultTax\paytaxes.class

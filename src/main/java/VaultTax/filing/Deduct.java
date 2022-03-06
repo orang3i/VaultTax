@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static VaultTax.VaultTaxMain.taxpec;
 import static org.bukkit.Bukkit.getServer;
 
 public class Deduct implements Listener {
@@ -40,7 +41,7 @@ public class Deduct implements Listener {
             public void run() {
                 Player player = event.getPlayer();
                 UUID puuid = player.getUniqueId();
-                Bukkit.broadcastMessage(String.valueOf(VaultTaxMain.fordeduct + "fore"));
+
                 FileConfiguration ple ;
                File file = new File("plugins/VaultTax/PlayerData", "balance.yml");
                  ple = YamlConfiguration.loadConfiguration(file)  ;
@@ -78,12 +79,14 @@ public class Deduct implements Listener {
 
 
                     double tax = ple.getDouble("TBW_"+puuid.toString());
-                    Bukkit.broadcastMessage(String.valueOf(tax));
+
                     VaultTaxMain.getEconomy().withdrawPlayer(player, tax);
 
                     ple = YamlConfiguration.loadConfiguration(file);
                     ple.set("Balance_"+player.getUniqueId(), VaultTaxMain.getEconomy().getBalance(player));
-                    ple.set("TBW_"+puuid.toString(), null);
+                    ple.set("TBW_" + puuid.toString(), null);
+
+
 
                     try {
                         ple.save(file);
@@ -92,6 +95,32 @@ public class Deduct implements Listener {
 
                     ple = YamlConfiguration.loadConfiguration(file);
                     ple = YamlConfiguration.loadConfiguration(file);
+
+                    for (String uuidd : qui.getKeys(false)) {
+
+
+                        String name = Bukkit.getServer().getOfflinePlayer(uuidd).getName();
+                        double baleo = ple.getDouble("Balance_" + uuidd);
+
+                        double amtearnedo = VaultTaxMain.getEconomy().getBalance(name) - baleo;
+
+                        double taxo = amtearnedo * taxpec / 100;
+
+                        double taxoo = Math.abs(taxo);
+
+
+                        ple.set("TBW_" + uuidd, taxoo);
+
+
+                        try {
+                            ple.save(file);
+                        } catch (Exception e) {
+                        }
+
+                        ple = YamlConfiguration.loadConfiguration(file);
+
+
+                    }
 
 
                     ple.set("Balance_" + player.getUniqueId().toString(), VaultTaxMain.getEconomy().getBalance(player));
@@ -119,7 +148,7 @@ public class Deduct implements Listener {
                             ple = YamlConfiguration.loadConfiguration(file);
 
                         }
-                    },0L );
+                    },10L );
 
 
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -136,11 +165,11 @@ public class Deduct implements Listener {
                             } catch (Exception e) {
                             }
                             ple = YamlConfiguration.loadConfiguration(file);
-Bukkit.broadcastMessage("proceed");
+
                             }
                         }, VaultTaxMain.fordeduct);
 
-Bukkit.broadcastMessage(String.valueOf(VaultTaxMain.fordeduct));
+
                 }
 
                 if (ba == false) {
