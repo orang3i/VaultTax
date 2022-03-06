@@ -2,9 +2,9 @@
 settings:
   #mode 1 is automated filing , mode 2 is manual filing ie it will promt the user to file their taxes and if they fail to file their taxes
   #will be deducted automatically with a penalty
-  mode: 2 #mode 2 recommended
+  mode: 1
   interval : 24000 #in seconds
   timeleftToFile : 100 #only for mode 2 (in seconds) , time before it automatically charges the user including penalties (should be less than interval)
   taxPercentage : 10
-  finePercentage : 20 #only for mode 2 , set this to 0 if you dont want fines
+  finePercentage : 0 #only for mode 2 , keep this to 0 if you are using mode 1
 
